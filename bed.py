@@ -29,19 +29,19 @@ def play_video():
 
 def lights_up(all=True):
 	if all == True:
-		GPIO.output(lights, GPIO.HIGH)
+		GPIO.output(lights, GPIO.LOW)
 	else:
 		for l in lights:
-				GPIO.output(l, GPIO.HIGH)
+				GPIO.output(l, GPIO.LOW)
 				time.sleep(1)
 
 
 def lights_down(all=True):
 	if all == True:
-		GPIO.output(lights, GPIO.LOW)
+		GPIO.output(lights, GPIO.HIGH)
 	else:
 		for l in reversed(lights):
-				GPIO.output(l, GPIO.LOW)
+				GPIO.output(l, GPIO.HIGH)
 				time.sleep(1)
 
 
