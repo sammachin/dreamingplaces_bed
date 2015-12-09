@@ -25,6 +25,7 @@ def play_video():
 				lights_up()
 				break
 	lights_up(False)
+	time.sleep(15)
 
 
 def lights_up(all=True):
@@ -46,10 +47,12 @@ def lights_down(all=True):
 
 
 def pressed(c):
+	GPIO.remove_event_callback(c)
 	if GPIO.input(channel) == 0:
 		lights_down(False)
 		time.sleep(1)
 		play_video()
+		GPIO.add_event_callback(channel, pressed)
 
 
 if __name__ == "__main__":
