@@ -11,9 +11,12 @@ GPIO.cleanup()
 path = "/home/pi/Videos/"
 channel = 18
 lights = [3, 5, 7, 11, 13, 15, 19, 31]
+playing = False
 
 
 def play_video():
+	global playing
+	playing = True
 	video = random.choice(os.listdir(path))
 	vidpath = path + video
 	child = pexpect.spawn('omxplayer -o local %s' % vidpath)
@@ -23,9 +26,11 @@ def play_video():
 			if GPIO.input(channel) == 1:
 				child.sendline('q')
 				lights_up()
+				playing = False
 				break
 	lights_up(False)
 	time.sleep(15)
+	playing = False
 
 
 def lights_up(all=True):
@@ -47,19 +52,19 @@ def lights_down(all=True):
 
 
 def pressed(c):
-	GPIO.remove_event_detect(c)
-	if GPIO.input(channel) == 0:
+	global playing
+	print "Callback"
+	if (playing == False and GPIO.input(channel) == 0):
+		print "GO!"
 		lights_down(False)
-		time.sleep(1)
 		play_video()
-		GPIO.add_event_detect(c, GPIO.FALLING,  bouncetime=200)
 
 
 if __name__ == "__main__":
 	GPIO.setmode(GPIO.BOARD)
 	GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 	GPIO.setup(lights, GPIO.OUT)
-	GPIO.add_event_detect(channel, GPIO.FALLING,  bouncetime=200)
+	GPIO.add_event_detect(channel, GPIO.FALLING,  bouncetime=1200)
 	GPIO.add_event_callback(channel, pressed)
 	lights_up()
 	while True:
